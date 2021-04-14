@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
     new_model = build_fusion_model_2()
     new_model.compile(optimizer='adam',
-                      loss='mse'
+                      loss='mse',
                       )
 
 

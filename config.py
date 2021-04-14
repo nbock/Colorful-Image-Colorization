@@ -3,13 +3,13 @@ import os
 cls = ["pizza", "farm", "forest_road", "butte"]
 dic = {
     "pizza": (4481, 497),  # update this to match exatly
-    "farm": (4484, 498),
+    "farm": (4484, 498),  #its just used to calculate number of steps in epochs
     "forest_road": (4472, 496)
 }
 
 
 class config:
-    c = cls[2]
+    c = cls[0]
     train_dir = f"/Users/naveen/Documents/ML local Data/{c}"
     test_dir = f"/Users/naveen/Documents/ML local Data/testdata/{c}"
     embedding_path = f"/Users/naveen/PycharmProjects/ZhanghImpl1/encoder_decoder/embedding/{c}"

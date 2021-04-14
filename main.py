@@ -58,7 +58,9 @@ if __name__ == '__main__':
     new_model = build_zhangs_model_2()
     sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, nesterov=True, clipnorm=5.)
     new_model.compile(optimizer='adam',
-                      loss=tf.keras.losses.CategoricalCrossentropy()
+                      loss=tf.keras.losses.CategoricalCrossentropy(),
+
+
                       # loss=categorical_mine
                       )
 
@@ -69,7 +71,7 @@ if __name__ == '__main__':
     '''
     model load or not setting
     '''
-    # new_model.load_weights(config.model_min_loss_out)
+    new_model.load_weights(config.model_min_loss_out)
     new_model.fit(train_generator(helper),
                   steps_per_epoch=config.train_size // config.batch_size,
                   validation_data=train_generator(helper, train=False),
