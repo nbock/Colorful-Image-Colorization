@@ -69,10 +69,13 @@ class DataHelper:
         # (np.ravel(Y[4 * h * w :5 * h * w,:])==np.ravel(block)).all() must be true
 
 
-def train_generator(helper, train=True):
+def data_generator(helper, type="train"):
     iter = helper.train_iter
-    if not train:
+    if type == "val":
         iter = helper.validation_iter
+    elif type == "test":
+        iter = helper.test_iter
+
     for batch_ in iter:
         batch = 1.0 / 255 * batch_  # rgb2lab needs rgb in 0..1 range
         B = batch_.shape[0]

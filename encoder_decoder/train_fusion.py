@@ -4,7 +4,7 @@ import keras
 import tensorflow as tf
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 
-from encoder_decoder.data_gen import DataHelperRMS_FUSION, train_generator
+from encoder_decoder.data_gen import DataHelperRMS_FUSION, data_generator
 from encoder_decoder.model_fusion import build_fusion_model, build_fusion_model_2
 from tensorflow.python.framework.ops import disable_eager_execution
 import numpy as np
@@ -35,9 +35,9 @@ if __name__ == '__main__':
        model load or not setting
     '''
     # new_model.load_weights(config.model_min_loss_out_emb)
-    new_model.fit(train_generator(helper),
+    new_model.fit(data_generator(helper),
                   steps_per_epoch=config.train_size // config.batch_size,
-                  validation_data=train_generator(helper, train=False),
+                  validation_data=data_generator(helper, train=False),
                   validation_steps=config.validation_size // config.batch_size,
                   epochs=config.epochs,
                   verbose=1,

@@ -7,7 +7,7 @@ from model import build_simple_model, build_zhangs_model, build_zhangs_model_2
 from tensorflow.python.framework.ops import disable_eager_execution
 import numpy as np
 import keras.backend as K
-from data_generator import DataHelper, train_generator
+from data_generator import DataHelper, data_generator
 from config import config
 disable_eager_execution()
 
@@ -59,9 +59,8 @@ if __name__ == '__main__':
     sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, nesterov=True, clipnorm=5.)
     new_model.compile(optimizer='adam',
                       loss=tf.keras.losses.CategoricalCrossentropy(),
-
-
-                      # loss=categorical_mine
+                      metrics=["accuracy"]
+                      # loss=categorical_mine,
                       )
 
 
@@ -72,9 +71,9 @@ if __name__ == '__main__':
     model load or not setting
     '''
     new_model.load_weights(config.model_min_loss_out)
-    new_model.fit(train_generator(helper),
+    new_model.fit(data_generator(helper),
                   steps_per_epoch=config.train_size // config.batch_size,
-                  validation_data=train_generator(helper, train=False),
+                  validation_data=data_generator(helper, type="val"),
                   validation_steps=config.validation_size // config.batch_size,
                   epochs=config.epochs,
                   verbose=1,

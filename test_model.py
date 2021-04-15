@@ -2,11 +2,12 @@ from skimage.color import rgb2lab, lab2rgb
 from skimage.transform import rescale
 
 from config import config
-from data_generator import DataHelper
+from data_generator import DataHelper, data_generator
 import numpy as np
 # def get_colored_image(Limage):
 from model import build_zhangs_model, build_zhangs_model_2
 from skimage import io
+import tensorflow as tf
 
 
 class Tester:
@@ -49,7 +50,19 @@ class Tester:
             io.imsave(f"{config.results_dir}/{config.c}_00{i}_truth.jpg", RGB)
             io.imsave(f"{config.results_dir}/{config.c}_00{i}_model_out.jpg", RGB_out)
 
+    def evaluate(self):
+        self.model.compile(optimizer='adam', loss=tf.keras.losses.CategoricalCrossentropy(),
+                           metrics=["accuracy"]
+                           )
+        test_generator = data_generator(self.helper, type="test")
+        self.helper.test_iter.batch_size = self.n
+        for X_batch, Y_batch in test_generator:
+            loss, acc = self.model.evaluate(X_batch, Y_batch)
+            print(f"accuracy={acc}")
+            break
+
 
 if __name__ == '__main__':
     t = Tester(size=22, path=config.model_min_val_loss_out)
-    t.test()
+    # t.test()
+    t.evaluate()

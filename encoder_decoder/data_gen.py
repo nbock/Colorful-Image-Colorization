@@ -15,7 +15,6 @@ from tensorflow.python.compiler.mlcompute import mlcompute
 
 mlcompute.set_mlc_device(device_name='gpu')
 
-
 class DataHelperRMS_FUSION:
     def __init__(self, directory_path=config.train_dir):
         '''
@@ -43,10 +42,12 @@ class DataHelperRMS_FUSION:
                                                           shuffle=False)
 
 
-def train_generator(helper, train=True):
+def data_generator(helper, type="train"):
     iter = helper.train_iter
-    if not train:
+    if type == "val":
         iter = helper.validation_iter
+    elif type == "test":
+        iter = helper.test_iter
     iter.shuffle = False  # very important for filenames to work
     for batch_ in iter:
         b = batch_.shape[0]  # current size <=50
@@ -71,6 +72,6 @@ def train_generator(helper, train=True):
         yield [X_batch, b_emb], Y_batch / 128
 
 
+
 if __name__ == '__main__':
     helper = DataHelperRMS_FUSION()
-    train_generator(helper)

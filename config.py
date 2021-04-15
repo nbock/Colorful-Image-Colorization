@@ -4,7 +4,8 @@ cls = ["pizza", "farm", "forest_road", "butte"]
 dic = {
     "pizza": (4481, 497),  # update this to match exatly
     "farm": (4484, 498),  #its just used to calculate number of steps in epochs
-    "forest_road": (4472, 496)
+    "forest_road": (4472, 496),
+    "butte": (4472, 496)
 }
 
 
