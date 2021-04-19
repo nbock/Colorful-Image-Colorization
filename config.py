@@ -35,10 +35,10 @@ class config:
     '''
     model related configs
     '''
-    model_min_loss_out = f"/Users/naveen/PycharmProjects/ZhanghImpl1/{c}model.h5"
-    model_min_val_loss_out = f"/Users/naveen/PycharmProjects/ZhanghImpl1/{c}model_val.h5"
+    model_min_loss_out = f"/Users/naveen/PycharmProjects/ZhanghImpl1/models/{c}model.h5"
+    model_min_val_loss_out = f"/Users/naveen/PycharmProjects/ZhanghImpl1/models/{c}model_val.h5"
 
-    model_min_loss_out_emb = f"/Users/naveen/PycharmProjects/ZhanghImpl1/encoder_decoder/{c}model.h5"
-    model_min_val_loss_out_emd = f"/Users/naveen/PycharmProjects/ZhanghImpl1/encoder_decoder/{c}model_val.h5"
+    model_min_loss_out_emb = f"/Users/naveen/PycharmProjects/ZhanghImpl1/encoder_decoder/models/{c}model.h5"
+    model_min_val_loss_out_emd = f"/Users/naveen/PycharmProjects/ZhanghImpl1/encoder_decoder/models/{c}model_val.h5"
     epochs = 40
     T = 0.38  # annealed mean temperature
