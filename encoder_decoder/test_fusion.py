@@ -32,7 +32,7 @@ model.compile(optimizer='adam', loss='mse',
 model.load_weights(config.model_min_loss_out_emb)
 
 
-def print_results_and_evaluate():
+def evaluate(print_=False):
     accs=[]
     for i, im in enumerate(ims):
         f = f"{folder_path}/{im}"
@@ -53,14 +53,15 @@ def print_results_and_evaluate():
         X_batch = np.zeros((1, config.H, config.W, 1))
         LAB = rgb2lab(1.0 / 255 * read1)  # HxWx3
         X_batch[0, :, :, 0] = LAB[:, :, 0]  # HxW L channel 0 to 100
-        Y_batch = LAB[:, :, 1:]/128  # HxWx2 AB channels
-        y = model.predict([X_batch, n_emb])
-        cur = np.zeros((config.H, config.W, 3))
-        cur[:, :, 0] = LAB[:, :, 0]
-        cur[:, :, 1:] = y * 128
-        io.imsave(f"{config.results_dir_emd}/{config.c}_00{i}_truth.jpg", read)
-        io.imsave(f"{config.results_dir_emd}/{config.c}_00{i}_model_out.jpg", lab2rgb(cur))
+        if print_:
+            y = model.predict([X_batch, n_emb])
+            cur = np.zeros((config.H, config.W, 3))
+            cur[:, :, 0] = LAB[:, :, 0]
+            cur[:, :, 1:] = y * 128
+            io.imsave(f"{config.results_dir_emd}/{config.c}_00{i}_truth.jpg", read)
+            io.imsave(f"{config.results_dir_emd}/{config.c}_00{i}_model_out.jpg", lab2rgb(cur))
 
+        Y_batch = LAB[:, :, 1:]/128  # HxWx2 AB channels
         Y_batch = Y_batch[np.newaxis, :, :, :]
         loss, acc = model.evaluate([X_batch, n_emb], Y_batch)
         print(f"loss={loss}, mse accuracy={acc}")
@@ -68,4 +69,4 @@ def print_results_and_evaluate():
     print(f"\nFinal average mse accuracy = {sum(accs)/len(accs)}")
 
 helper = DataHelperRMS_FUSION()
-print_results_and_evaluate()
+evaluate(print_=False)

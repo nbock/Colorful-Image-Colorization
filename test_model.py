@@ -22,9 +22,9 @@ class Tester:
         self.n = len(self.helper.test_iter.filenames)
         self.model = build_zhangs_model_2()
         self.model.compile(optimizer='adam',
-                           # loss=tf.keras.losses.CategoricalCrossentropy(),
-                           loss=categorical_mine,
-                           metrics=["accuracy"]
+                           loss=tf.keras.losses.CategoricalCrossentropy(),
+                           # loss=categorical_mine,
+                           metrics=["accuracy", tf.keras.metrics.CategoricalCrossentropy()]
                            )
         self.model.load_weights(path)
         self.a = self.helper.quantized_ab[:, 0]  # 313
@@ -63,16 +63,15 @@ class Tester:
             io.imsave(f"{config.results_dir}/{config.c}_00{i}_model_out.jpg", RGB_out)
 
     def evaluate(self):
-
         test_generator = data_generator(self.helper, type="test")
         self.helper.test_iter.batch_size = self.n
         for X_batch, Y_batch in test_generator:
-            loss, acc = self.model.evaluate(X_batch, Y_batch)
-            print(f"accuracy={acc}")
+            loss, acc, ac2 = self.model.evaluate(X_batch, Y_batch)
+            print(f"classification accuracy={acc}, cross entropy={ac2}")
             break
 
 
 if __name__ == '__main__':
     t = Tester(path=config.model_min_loss_out)
-    t.print_results()
-    # t.evaluate()
+    # t.print_results()
+    t.evaluate()
