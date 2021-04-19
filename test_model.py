@@ -1,20 +1,31 @@
 from skimage.color import rgb2lab, lab2rgb
 from skimage.transform import rescale
+from tensorflow.python.framework.ops import disable_eager_execution
 
 from config import config
 from data_generator import DataHelper, data_generator
 import numpy as np
 # def get_colored_image(Limage):
+from main import categorical_mine
 from model import build_zhangs_model, build_zhangs_model_2
 from skimage import io
 import tensorflow as tf
+disable_eager_execution()
 
+from tensorflow.python.compiler.mlcompute import mlcompute
+
+mlcompute.set_mlc_device(device_name='gpu')
 
 class Tester:
-    def __init__(self, size, path=config.model_min_loss_out):
+    def __init__(self, path=config.model_min_loss_out):
         self.helper = DataHelper()
-        self.n = size
+        self.n = len(self.helper.test_iter.filenames)
         self.model = build_zhangs_model_2()
+        self.model.compile(optimizer='adam',
+                           # loss=tf.keras.losses.CategoricalCrossentropy(),
+                           loss=categorical_mine,
+                           metrics=["accuracy"]
+                           )
         self.model.load_weights(path)
         self.a = self.helper.quantized_ab[:, 0]  # 313
         self.b = self.helper.quantized_ab[:, 1]  # 313
@@ -40,7 +51,8 @@ class Tester:
         RGB = lab2rgb(LAB)
         return RGB
 
-    def test(self):
+    def print_results(self):
+
         for i in range(self.n):
             RGB = self.helper.test_iter.next()[0]  # H,W,3
             RGB = 1.0 / 255 * RGB  # rgb2lab needs rgb in 0..1 range
@@ -51,9 +63,7 @@ class Tester:
             io.imsave(f"{config.results_dir}/{config.c}_00{i}_model_out.jpg", RGB_out)
 
     def evaluate(self):
-        self.model.compile(optimizer='adam', loss=tf.keras.losses.CategoricalCrossentropy(),
-                           metrics=["accuracy"]
-                           )
+
         test_generator = data_generator(self.helper, type="test")
         self.helper.test_iter.batch_size = self.n
         for X_batch, Y_batch in test_generator:
@@ -63,6 +73,6 @@ class Tester:
 
 
 if __name__ == '__main__':
-    t = Tester(size=22, path=config.model_min_val_loss_out)
-    # t.test()
-    t.evaluate()
+    t = Tester(path=config.model_min_loss_out)
+    t.print_results()
+    # t.evaluate()

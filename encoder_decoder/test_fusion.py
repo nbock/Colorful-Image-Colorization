@@ -23,15 +23,17 @@ mlcompute.set_mlc_device(device_name='gpu')
 
 folder_path = config.test_dir + "/test"
 ims = [x for x in os.listdir(folder_path) if x.endswith(".jpg")]
-import tensorflow as tf
-
 inception = MobileNetV2(weights='imagenet', include_top=False)
 
 model = build_fusion_model_2()
+model.compile(optimizer='adam', loss='mse',
+              metrics=["accuracy"]
+              )
 model.load_weights(config.model_min_loss_out_emb)
 
 
-def print_results():
+def print_results_and_evaluate():
+    accs=[]
     for i, im in enumerate(ims):
         f = f"{folder_path}/{im}"
         read = io.imread(f)
@@ -51,7 +53,7 @@ def print_results():
         X_batch = np.zeros((1, config.H, config.W, 1))
         LAB = rgb2lab(1.0 / 255 * read1)  # HxWx3
         X_batch[0, :, :, 0] = LAB[:, :, 0]  # HxW L channel 0 to 100
-
+        Y_batch = LAB[:, :, 1:]/128  # HxWx2 AB channels
         y = model.predict([X_batch, n_emb])
         cur = np.zeros((config.H, config.W, 3))
         cur[:, :, 0] = LAB[:, :, 0]
@@ -59,18 +61,11 @@ def print_results():
         io.imsave(f"{config.results_dir_emd}/{config.c}_00{i}_truth.jpg", read)
         io.imsave(f"{config.results_dir_emd}/{config.c}_00{i}_model_out.jpg", lab2rgb(cur))
 
-
-def evaluate(helper, n):
-    model.compile(optimizer='adam', loss='mse',
-                  metrics=["accuracy"]
-                  )
-    test_generator = data_generator(helper, type="test")
-    helper.test_iter.batch_size = n
-    for X_batch, Y_batch in test_generator:
-        loss, acc = model.evaluate(X_batch, Y_batch)
+        Y_batch = Y_batch[np.newaxis, :, :, :]
+        loss, acc = model.evaluate([X_batch, n_emb], Y_batch)
         print(f"loss={loss}, mse accuracy={acc}")
-        break
-
+        accs.append(acc)
+    print(f"\nFinal average mse accuracy = {sum(accs)/len(accs)}")
 
 helper = DataHelperRMS_FUSION()
-evaluate(helper, 22)
+print_results_and_evaluate()
