@@ -56,7 +56,6 @@ if __name__ == '__main__':
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
 
     new_model = build_zhangs_model_2()
-    sgd = keras.optimizers.SGD(lr=0.001, momentum=0.9, nesterov=True, clipnorm=5.)
     new_model.compile(optimizer='adam',
                       loss=tf.keras.losses.CategoricalCrossentropy(),
                       # loss=categorical_mine,
