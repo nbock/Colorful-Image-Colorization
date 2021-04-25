@@ -1,4 +1,4 @@
-from skimage.color import rgb2lab, lab2rgb
+from skimage.color import rgb2lab, lab2rgb, rgb2gray
 from skimage.transform import rescale
 from tensorflow.python.framework.ops import disable_eager_execution
 
@@ -52,7 +52,6 @@ class Tester:
         return RGB
 
     def print_results(self):
-
         for i in range(self.n):
             RGB = self.helper.test_iter.next()[0]  # H,W,3
             RGB = 1.0 / 255 * RGB  # rgb2lab needs rgb in 0..1 range
@@ -60,6 +59,7 @@ class Tester:
             L = LAB[:, :, 0]  # H,W
             RGB_out = self.lchannel_to_color(L)
             io.imsave(f"{config.results_dir}/{config.c}_00{i}_truth.jpg", RGB)
+            io.imsave(f"{config.results_dir}/{config.c}_00{i}_model_in.jpg", rgb2gray(RGB))
             io.imsave(f"{config.results_dir}/{config.c}_00{i}_model_out.jpg", RGB_out)
 
     def evaluate(self):
@@ -67,11 +67,11 @@ class Tester:
         self.helper.test_iter.batch_size = self.n
         for X_batch, Y_batch in test_generator:
             loss, acc, ac2 = self.model.evaluate(X_batch, Y_batch)
-            print(f"classification accuracy={acc}, cross entropy={ac2}")
+            print(f"loss={loss}, classification accuracy={acc}, cross entropy={ac2}")
             break
 
 
 if __name__ == '__main__':
     t = Tester(path=config.model_min_loss_out)
-    # t.print_results()
-    t.evaluate()
+    t.print_results()
+    # t.evaluate()

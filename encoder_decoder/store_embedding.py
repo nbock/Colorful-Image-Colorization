@@ -42,7 +42,7 @@ for im in ims:
     emb = inception.predict(resized)  # 1,7,7,1280
     emb = emb[0]  # 7,7,1280
     n_emb = emb[2:6, 2:6, :]  # 4,4,1280
-    n_emb = n_emb.reshape((16, 16, -1))
+    n_emb = n_emb.reshape((16, 16, -1))   #16,16,80
     np.save(f"{config.embedding_path}/{im}.npy", n_emb)
 
 print("")

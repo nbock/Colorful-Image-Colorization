@@ -16,6 +16,13 @@ from tensorflow.python.compiler.mlcompute import mlcompute
 mlcompute.set_mlc_device(device_name='gpu')
 
 
+def coeff_determination(y_true, y_pred):
+    from keras import backend as K
+    SS_res =  K.sum(K.square( y_true-y_pred ))
+    SS_tot = K.sum(K.square( y_true - K.mean(y_true) ) )
+    return ( 1 - SS_res/(SS_tot + K.epsilon()) )
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     model_checkpoint = ModelCheckpoint(config.model_min_loss_out_emb, monitor='loss', verbose=1, save_best_only=True)
@@ -25,6 +32,7 @@ if __name__ == '__main__':
     new_model = build_fusion_model_2()
     new_model.compile(optimizer='adam',
                       loss='mse',
+                      metrics=[coeff_determination]
                       )
 
 

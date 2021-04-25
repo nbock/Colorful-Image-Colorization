@@ -20,20 +20,32 @@ disable_eager_execution()
 from tensorflow.python.compiler.mlcompute import mlcompute
 
 mlcompute.set_mlc_device(device_name='gpu')
+import tensorflow as tf
 
 folder_path = config.test_dir + "/test"
+
 ims = [x for x in os.listdir(folder_path) if x.endswith(".jpg")]
 inception = MobileNetV2(weights='imagenet', include_top=False)
 
+
+
+def coeff_determination(y_true, y_pred):
+    from keras import backend as K
+    SS_res =  K.sum(K.square( y_true-y_pred ))
+    SS_tot = K.sum(K.square( y_true - K.mean(y_true) ) )
+    return ( 1 - SS_res/(SS_tot + K.epsilon()) )
+
+
 model = build_fusion_model_2()
 model.compile(optimizer='adam', loss='mse',
-              metrics=["accuracy"]
+              metrics=[coeff_determination]
               )
 model.load_weights(config.model_min_loss_out_emb)
 
 
-def evaluate(print_=False):
+def evaluate(print_=True):
     accs=[]
+    losses=[]
     for i, im in enumerate(ims):
         f = f"{folder_path}/{im}"
         read = io.imread(f)
@@ -59,14 +71,16 @@ def evaluate(print_=False):
             cur[:, :, 0] = LAB[:, :, 0]
             cur[:, :, 1:] = y * 128
             io.imsave(f"{config.results_dir_emd}/{config.c}_00{i}_truth.jpg", read)
+            io.imsave(f"{config.results_dir_emd}/{config.c}_00{i}_model_in.jpg", gray)
             io.imsave(f"{config.results_dir_emd}/{config.c}_00{i}_model_out.jpg", lab2rgb(cur))
 
         Y_batch = LAB[:, :, 1:]/128  # HxWx2 AB channels
         Y_batch = Y_batch[np.newaxis, :, :, :]
         loss, acc = model.evaluate([X_batch, n_emb], Y_batch)
-        print(f"loss={loss}, mse accuracy={acc}")
+        # print(f"loss={loss}, mse accuracy={acc}")
         accs.append(acc)
-    print(f"\nFinal average mse accuracy = {sum(accs)/len(accs)}")
+        losses.append(loss)
+    print(f"\nFinal average mse loss = {sum(losses)/len(losses)}, Rsquared = {sum(accs)/len(accs)}")
 
 helper = DataHelperRMS_FUSION()
-evaluate(print_=False)
+evaluate(print_=True)

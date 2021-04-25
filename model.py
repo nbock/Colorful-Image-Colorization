@@ -4,8 +4,7 @@ from config import config
 from keras.models import Sequential, load_model
 from keras.regularizers import l2
 from keras.models import Model
-
-
+import tensorflow as tf
 def build_simple_model():
     scale = config.H / 256
     model = Sequential()
@@ -150,6 +149,16 @@ def build_zhangs_model_2():
     model.summary()
     return model
 
-
 if __name__ == '__main__':
     m = build_zhangs_model_2()
+    tf.keras.utils.model_to_dot(
+        m,
+        to_file="model.png",
+        show_shapes=True,
+        show_dtype=False,
+        show_layer_names=True,
+        rankdir="TB",
+        expand_nested=False,
+        dpi=96,
+    )
+
