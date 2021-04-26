@@ -11,7 +11,7 @@ dic = {
 
 
 class config:
-    c = cls[3]
+    c = cls[1]
     train_dir = f"/Users/naveen/Documents/ML local Data/{c}"
     test_dir = f"/Users/naveen/Documents/ML local Data/testdata/{c}"
     embedding_path = f"/Users/naveen/PycharmProjects/ZhanghImpl1/encoder_decoder/embedding/{c}"

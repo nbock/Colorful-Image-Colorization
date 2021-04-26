@@ -27,12 +27,11 @@ def coeff_determination(y_true, y_pred):
 if __name__ == '__main__':
     model_checkpoint = ModelCheckpoint(config.model_min_loss_out_emb, monitor='loss', verbose=1, save_best_only=True)
     model_checkpoint2 = ModelCheckpoint(config.model_min_val_loss_out_emd, monitor='val_loss', verbose=1, save_best_only=True)
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=10,min_delta=0.001)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=7,min_delta=0.001)
 
     new_model = build_fusion_model_2()
     new_model.compile(optimizer='adam',
-                      loss='mse',
-                      metrics=[coeff_determination]
+                      loss='mse'
                       )
 
 

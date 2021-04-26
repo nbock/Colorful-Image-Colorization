@@ -15,11 +15,11 @@ import os
 class DataHelper:
     def __init__(self, directory_path=config.train_dir):
         self.datagen = ImageDataGenerator(
-            shear_range=0.2,
-            zoom_range=0.2,
-            rotation_range=20,
-            horizontal_flip=True,
-            validation_split=0.1
+            # shear_range=0.2,
+            # zoom_range=0.2,
+            # rotation_range=20,
+            # horizontal_flip=True,
+            # validation_split=0.1
         )
         print("constructor called")
 

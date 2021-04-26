@@ -53,7 +53,7 @@ def categorical_mine(y_true, y_pred):
 if __name__ == '__main__':
     model_checkpoint = ModelCheckpoint(config.model_min_loss_out, monitor='loss', verbose=1, save_best_only=True)
     model_checkpoint2 = ModelCheckpoint(config.model_min_val_loss_out, monitor='val_loss', verbose=1, save_best_only=True)
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=50)
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=7)
 
     new_model = build_zhangs_model_2()
     new_model.compile(optimizer='adam',

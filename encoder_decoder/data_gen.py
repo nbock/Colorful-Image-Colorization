@@ -21,11 +21,11 @@ class DataHelperRMS_FUSION:
         This is experimental for now because embedding features of transformed image may not be same
         '''
         self.datagen = ImageDataGenerator(
-            shear_range=0.2,
-            zoom_range=0.2,
-            rotation_range=20,
-            horizontal_flip=True,
-            validation_split=0.1
+            # shear_range=0.2,
+            # zoom_range=0.2,
+            # rotation_range=20,
+            # horizontal_flip=True,
+            # validation_split=0.1
         )
         print("constructor called")
 
